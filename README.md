@@ -1,0 +1,194 @@
+# CreditSaathi
+
+> **AI-Powered Credit & Business Intelligence Platform for MSMEs**
+
+[![CI](https://github.com/YOUR_ORG/CreditSaathi/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_ORG/CreditSaathi/actions)
+
+---
+
+## 🚀 Overview
+
+CreditSaathi is a full-stack AI-powered credit intelligence platform for India's MSME sector. It evaluates MSME financial health using alternative data sources — GST filing patterns, UPI/bank transaction flows, monthly revenue trends, and payment behaviour — to generate instant credit scores, risk categories, and actionable business intelligence reports.
+
+### Key Features
+
+- **AI Credit Scoring** — XGBoost model generates scores (300–850) from GST + transaction data
+- **SHAP Explainability** — Visual breakdown of what drives each score
+- **Risk Categorisation** — Low / Medium / High risk with colour-coded badges
+- **Business Intelligence Dashboard** — Revenue trends, cash flow charts, score gauge
+- **Loan Recommendation Engine** — Auto-suggests loan amount, interest rate, government schemes
+- **Early Stress Detection** — Flags financial distress signals before they escalate
+- **Fraud Detection** — Rule-based anomaly detection for inflated data
+- **eKYC & Document Verification** — Upload and verify Aadhaar, PAN, bank statements
+- **LLM Chatbot (Phase 4)** — RAG-powered credit advisor using Groq API
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| **Frontend** | React 18 + Redux Toolkit + Tailwind CSS + Recharts |
+| **Backend** | Node.js 20 LTS + Express 4.x |
+| **Database** | MongoDB 7.x (Atlas free tier) + Mongoose 8.x |
+| **ML Service** | Python 3.11 + FastAPI + XGBoost + SHAP |
+| **File Storage** | Firebase Storage (free tier — 5 GB) |
+| **Email** | Nodemailer + Gmail SMTP |
+| **OCR** | Tesseract.js (open-source) |
+| **Chatbot LLM** | Groq API (free tier) |
+| **CI/CD** | GitHub Actions |
+| **Containerisation** | Docker + Docker Compose |
+| **Hosting** | Render / Railway (free tier) |
+
+---
+
+## 📁 Project Structure
+
+```
+CreditSaathi/
+├── client/                    # React frontend (Vite + Tailwind + Redux)
+│   └── src/
+│       ├── pages/             # Dashboard, Score, Reports, Login
+│       ├── components/        # Charts, Gauge, SHAP Panel, Risk Badge
+│       ├── store/             # Redux slices (auth, msme, score)
+│       ├── hooks/             # Custom hooks (useScore, useMSME, useAuth)
+│       ├── services/          # Axios API service layer
+│       ├── utils/             # Formatters, validators
+│       └── assets/            # Logos, icons, static assets
+│
+├── server/                    # Node.js/Express backend
+│   ├── config/                # DB connection, env, constants
+│   ├── models/                # Mongoose schemas
+│   ├── routes/                # Express route definitions
+│   ├── controllers/           # Business logic handlers
+│   ├── middleware/            # Auth, error handling, rate limiting
+│   ├── services/              # ML service caller, storage, email
+│   ├── utils/                 # Helpers, validators, formatters
+│   └── tests/                 # Jest test suites
+│
+├── ml/                        # Python/FastAPI ML microservice
+│   ├── app/                   # FastAPI application
+│   ├── models/                # Saved .joblib model files
+│   └── tests/                 # pytest test suites
+│
+├── docs/                      # Project documentation
+├── .github/workflows/         # GitHub Actions CI/CD
+├── docker-compose.yml         # Local dev environment
+├── .env.example               # Template environment variables
+├── .gitignore
+├── functional_requirements.md
+├── requirements-2.md
+└── README.md
+```
+
+---
+
+## ⚡ Quick Start
+
+### Prerequisites
+
+- **Node.js** >= 20.x LTS
+- **Python** >= 3.11
+- **MongoDB** (local or Atlas free tier)
+- **Docker & Docker Compose** (optional, for containerised setup)
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/YOUR_ORG/CreditSaathi.git
+cd CreditSaathi
+```
+
+### 2. Environment Setup
+
+```bash
+cp .env.example server/.env
+cp .env.example ml/.env
+# Edit both .env files with your actual credentials
+```
+
+### 3. Run with Docker (Recommended)
+
+```bash
+docker-compose up --build
+```
+
+This starts:
+- **Frontend** → http://localhost:3000
+- **Backend API** → http://localhost:5000
+- **ML Service** → http://localhost:8000
+- **MongoDB** → localhost:27017
+
+### 4. Run Without Docker
+
+**Backend:**
+```bash
+cd server
+npm install
+npm run dev
+```
+
+**Frontend:**
+```bash
+cd client
+npm install
+npm run dev
+```
+
+**ML Service:**
+```bash
+cd ml
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
+```
+
+---
+
+## 👥 Team & Roles
+
+| Member | Role | Responsibilities |
+|--------|------|------------------|
+| **Developer A** | Backend Lead | Node.js/Express APIs, ML service integration, MongoDB design |
+| **Developer B** | Frontend Lead | React UI, Redux state, dashboard, data visualisation |
+| **Developer C** | ML / Data Engineer | Python ML service, SHAP, feature engineering, synthetic data |
+| **Developer D** | Full-Stack + DevOps | MongoDB queries, deployment, CI/CD, testing |
+
+---
+
+## 🌿 Branch Strategy
+
+```
+main ← develop ← feature/xxx
+```
+
+- **`main`** — Production-ready code only
+- **`develop`** — Integration branch, all features merge here first
+- **`feature/xxx`** — Individual feature branches (e.g. `feature/auth`, `feature/scoring-api`)
+- All PRs require **at least 1 reviewer** before merge
+- Never push directly to `main` or `develop`
+
+---
+
+## 📋 Sprint Plan
+
+| Sprint | Weeks | Focus |
+|--------|-------|-------|
+| Sprint 1 | 1–2 | Foundation, Auth, MSME Onboarding |
+| Sprint 2 | 3–4 | Data Ingestion, ML Model, Scoring API |
+| Sprint 3 | 5–6 | Dashboard, SHAP Panel, Visualisations |
+| Sprint 4 | 7–8 | Loan Module, Recommendation Engine |
+| Sprint 5 | 9–10 | eKYC, Fraud Detection, Hardening |
+| Sprint 6 | 11–12 | Testing, Deployment, Pilot Prep |
+
+---
+
+## 📖 Documentation
+
+- [Functional Requirements](./functional_requirements.md) — Detailed feature specs for all phases
+- [Project Requirements](./requirements-2.md) — Tech stack, architecture, API design, sprint plan
+
+---
+
+## 📄 License
+
+This project is proprietary and confidential. All rights reserved.
