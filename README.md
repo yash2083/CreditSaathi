@@ -2,7 +2,6 @@
 
 > **AI-Powered Credit & Business Intelligence Platform for MSMEs**
 
-[![CI](https://github.com/YOUR_ORG/CreditSaathi/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_ORG/CreditSaathi/actions)
 
 ---
 
