@@ -1,0 +1,60 @@
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import api from "../services/api";
+
+export const submitLoan = createAsyncThunk("loan/submit", async (loanData, { rejectWithValue }) => {
+  try {
+    const { data } = await api.post("/loans", loanData);
+    return data.data;
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.error?.message || "Failed to submit loan");
+  }
+});
+
+export const fetchLoans = createAsyncThunk("loan/fetchAll", async (params = {}, { rejectWithValue }) => {
+  try {
+    const { data } = await api.get("/loans", { params });
+    return data;
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.error?.message || "Failed to fetch loans");
+  }
+});
+
+export const updateLoanStatus = createAsyncThunk("loan/updateStatus", async ({ id, ...updateData }, { rejectWithValue }) => {
+  try {
+    const { data } = await api.patch(`/loans/${id}/status`, updateData);
+    return data.data;
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.error?.message || "Failed to update loan status");
+  }
+});
+
+const loanSlice = createSlice({
+  name: "loan",
+  initialState: {
+    list: [],
+    pagination: null,
+    loading: false,
+    error: null,
+  },
+  reducers: {
+    clearLoanError: (state) => { state.error = null; },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(submitLoan.fulfilled, (state, action) => { state.list.unshift(action.payload); })
+      .addCase(fetchLoans.pending, (state) => { state.loading = true; })
+      .addCase(fetchLoans.fulfilled, (state, action) => {
+        state.loading = false;
+        state.list = action.payload.data;
+        state.pagination = action.payload.pagination;
+      })
+      .addCase(fetchLoans.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
+      .addCase(updateLoanStatus.fulfilled, (state, action) => {
+        const idx = state.list.findIndex((l) => l._id === action.payload._id);
+        if (idx >= 0) state.list[idx] = action.payload;
+      });
+  },
+});
+
+export const { clearLoanError } = loanSlice.actions;
+export default loanSlice.reducer;
