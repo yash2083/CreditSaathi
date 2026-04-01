@@ -4,6 +4,7 @@ import api from "../services/api";
 export const loginUser = createAsyncThunk("auth/login", async (credentials, { rejectWithValue }) => {
   try {
     const { data } = await api.post("/auth/login", credentials);
+    if (!data.success) return rejectWithValue(data.error?.message || "Login failed");
     localStorage.setItem("accessToken", data.data.accessToken);
     localStorage.setItem("refreshToken", data.data.refreshToken);
     localStorage.setItem("user", JSON.stringify(data.data.user));
@@ -16,6 +17,7 @@ export const loginUser = createAsyncThunk("auth/login", async (credentials, { re
 export const registerUser = createAsyncThunk("auth/register", async (userData, { rejectWithValue }) => {
   try {
     const { data } = await api.post("/auth/register", userData);
+    if (!data.success) return rejectWithValue(data.error?.message || "Registration failed");
     localStorage.setItem("accessToken", data.data.accessToken);
     localStorage.setItem("refreshToken", data.data.refreshToken);
     localStorage.setItem("user", JSON.stringify(data.data.user));

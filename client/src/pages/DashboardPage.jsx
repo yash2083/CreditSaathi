@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchMSMEs } from "../store/msmeSlice";
+import { fetchMSMEs, fetchGSTRecords, fetchTransactionRecords } from "../store/msmeSlice";
 import { fetchLatestScore, fetchScoreHistory } from "../store/scoreSlice";
 import { fetchLoans } from "../store/loanSlice";
 import { useNavigate } from "react-router-dom";
@@ -17,12 +17,21 @@ export default function DashboardPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((s) => s.auth);
-  const { list: msmes } = useSelector((s) => s.msme);
+  const { list: msmes, gstRecords, transactionRecords } = useSelector((s) => s.msme);
   const { latest, history } = useSelector((s) => s.score);
   const { list: loans } = useSelector((s) => s.loan);
 
   useEffect(() => { dispatch(fetchMSMEs()); dispatch(fetchLoans()); }, [dispatch]);
-  useEffect(() => { if (msmes.length > 0) { dispatch(fetchLatestScore(msmes[0]._id)); dispatch(fetchScoreHistory(msmes[0]._id)); } }, [msmes, dispatch]);
+
+  useEffect(() => {
+    if (msmes.length > 0) {
+      const msmeId = msmes[0]._id;
+      dispatch(fetchLatestScore(msmeId));
+      dispatch(fetchScoreHistory(msmeId));
+      dispatch(fetchGSTRecords(msmeId));
+      dispatch(fetchTransactionRecords(msmeId));
+    }
+  }, [msmes, dispatch]);
 
   const msme = msmes[0];
   const isBanker = user?.role === "bank_officer" || user?.role === "admin";
@@ -82,8 +91,8 @@ export default function DashboardPage() {
 
           {/* Charts + Insights */}
           <div className="lg:col-span-8 space-y-5">
-            <RevenueChart data={[]} />
-            <CashFlowChart data={[]} />
+            <RevenueChart data={gstRecords} />
+            <CashFlowChart data={transactionRecords} />
             <ScoreHistoryChart data={history} />
 
             {/* Stress Signals */}

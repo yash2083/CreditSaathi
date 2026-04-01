@@ -29,11 +29,11 @@ CreditSaathi is a full-stack AI-powered credit intelligence platform for India's
 | Layer | Technology |
 |-------|------------|
 | **Frontend** | React 18 + Redux Toolkit + Tailwind CSS + Recharts |
-| **Backend** | Node.js 20 LTS + Express 4.x |
-| **Database** | MongoDB 7.x (Atlas free tier) + Mongoose 8.x |
+| **Backend** | Python 3.12 + FastAPI + Uvicorn |
+| **Database** | MongoDB 7.x (Atlas) + Motor (async) + Beanie ODM |
 | **ML Service** | Python 3.11 + FastAPI + XGBoost + SHAP |
-| **File Storage** | Firebase Storage (free tier — 5 GB) |
-| **Email** | Nodemailer + Gmail SMTP |
+| **Auth** | JWT (python-jose) + bcrypt (passlib) |
+| **HTTP Client** | httpx (async, for ML service calls) |
 | **OCR** | Tesseract.js (open-source) |
 | **Chatbot LLM** | Groq API (free tier) |
 | **CI/CD** | GitHub Actions |
@@ -56,15 +56,17 @@ CreditSaathi/
 │       ├── utils/             # Formatters, validators
 │       └── assets/            # Logos, icons, static assets
 │
-├── server/                    # Node.js/Express backend
-│   ├── config/                # DB connection, env, constants
-│   ├── models/                # Mongoose schemas
-│   ├── routes/                # Express route definitions
-│   ├── controllers/           # Business logic handlers
-│   ├── middleware/            # Auth, error handling, rate limiting
-│   ├── services/              # ML service caller, storage, email
-│   ├── utils/                 # Helpers, validators, formatters
-│   └── tests/                 # Jest test suites
+├── server/                    # Python/FastAPI backend
+│   ├── app/
+│   │   ├── main.py            # FastAPI app entry point
+│   │   ├── config.py          # Pydantic settings (env vars)
+│   │   ├── database.py        # Motor + Beanie DB init & safe-seed
+│   │   ├── models/            # Beanie document models
+│   │   ├── routes/            # FastAPI route modules
+│   │   └── services/          # Auth (JWT), ML caller, audit log
+│   ├── seed.py                # Full database seeder script
+│   ├── requirements.txt       # Python dependencies
+│   └── .env                   # Environment variables
 │
 ├── ml/                        # Python/FastAPI ML microservice
 │   ├── app/                   # FastAPI application
@@ -87,9 +89,9 @@ CreditSaathi/
 
 ### Prerequisites
 
-- **Node.js** >= 20.x LTS
-- **Python** >= 3.11
-- **MongoDB** (local or Atlas free tier)
+- **Python** >= 3.12
+- **Node.js** >= 20.x LTS (for frontend only)
+- **MongoDB** (Atlas recommended)
 - **Docker & Docker Compose** (optional, for containerised setup)
 
 ### 1. Clone the Repository
@@ -121,11 +123,11 @@ This starts:
 
 ### 4. Run Without Docker
 
-**Backend:**
+**Backend (FastAPI):**
 ```bash
 cd server
-npm install
-npm run dev
+pip install -r requirements.txt
+uvicorn app.main:app --host 0.0.0.0 --port 5000 --reload
 ```
 
 **Frontend:**
@@ -148,7 +150,7 @@ uvicorn app.main:app --reload --port 8000
 
 | Member | Role | Responsibilities |
 |--------|------|------------------|
-| **Developer A** | Backend Lead | Node.js/Express APIs, ML service integration, MongoDB design |
+| **Developer A** | Backend Lead | FastAPI APIs, ML service integration, MongoDB design |
 | **Developer B** | Frontend Lead | React UI, Redux state, dashboard, data visualisation |
 | **Developer C** | ML / Data Engineer | Python ML service, SHAP, feature engineering, synthetic data |
 | **Developer D** | Full-Stack + DevOps | MongoDB queries, deployment, CI/CD, testing |

@@ -6,6 +6,7 @@ import {
   LayoutDashboard, Building2, PlusCircle, Upload, Landmark,
   ChevronLeft, ChevronRight, Bell, LogOut, User,
 } from "lucide-react";
+import ChatbotWidget from "./ChatbotWidget";
 
 const navItems = [
   { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -99,6 +100,7 @@ export default function AppLayout() {
         <div className="p-6 animate-fade-in">
           <Outlet />
         </div>
+        <ChatbotWidget />
       </main>
     </div>
   );

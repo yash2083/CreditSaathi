@@ -3,6 +3,8 @@ node_modules/
 __pycache__/
 *.pyc
 .pyo
+venv/
+.venv/
 
 # Environment
 .env
@@ -26,7 +28,6 @@ Thumbs.db
 
 # Logs
 *.log
-npm-debug.log*
 
 # ML models (large files)
 ml/models/*.joblib
@@ -34,8 +35,11 @@ ml/models/*.pkl
 
 # Coverage
 coverage/
-.nyc_output/
 htmlcov/
+.pytest_cache/
 
 # Firebase
 firebase-key.json
+
+# Seed / temp scripts
+server/verify.py

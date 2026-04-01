@@ -323,7 +323,7 @@ export default function LandingPage() {
             <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center text-white font-bold text-[10px]">CS</div>
             <span className="text-sm font-medium text-txt">CreditSaathi</span>
           </div>
-          <p className="text-xs text-txt-muted">© 2024 CreditSaathi Technologies. All rights reserved.</p>
+          <p className="text-xs text-txt-muted">© 2026 CreditSaathi Technologies. All rights reserved.</p>
         </div>
       </footer>
     </div>
