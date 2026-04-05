@@ -2,7 +2,7 @@
 
 > **AI-Powered Credit & Business Intelligence Platform for MSMEs**
 
-[![CI](https://github.com/YOUR_ORG/CreditSaathi/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_ORG/CreditSaathi/actions)
+[![CI Status](https://img.shields.io/badge/CI-passing-success?style=flat-square)](https://github.com/yash2083/CreditSaathi/actions)
 
 ---
 
@@ -97,7 +97,7 @@ CreditSaathi/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_ORG/CreditSaathi.git
+git clone https://github.com/yash2083/CreditSaathi.git
 cd CreditSaathi
 ```
 
@@ -116,6 +116,7 @@ docker-compose up --build
 ```
 
 This starts:
+
 - **Frontend** → http://localhost:3000
 - **Backend API** → http://localhost:5000
 - **ML Service** → http://localhost:8000
@@ -124,6 +125,7 @@ This starts:
 ### 4. Run Without Docker
 
 **Backend (FastAPI):**
+
 ```bash
 cd server
 pip install -r requirements.txt
@@ -131,6 +133,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 5000 --reload
 ```
 
 **Frontend:**
+
 ```bash
 cd client
 npm install
@@ -138,6 +141,7 @@ npm run dev
 ```
 
 **ML Service:**
+
 ```bash
 cd ml
 pip install -r requirements.txt
@@ -173,14 +177,14 @@ main ← develop ← feature/xxx
 
 ## 📋 Sprint Plan
 
-| Sprint | Weeks | Focus |
-|--------|-------|-------|
-| Sprint 1 | 1–2 | Foundation, Auth, MSME Onboarding |
-| Sprint 2 | 3–4 | Data Ingestion, ML Model, Scoring API |
-| Sprint 3 | 5–6 | Dashboard, SHAP Panel, Visualisations |
-| Sprint 4 | 7–8 | Loan Module, Recommendation Engine |
-| Sprint 5 | 9–10 | eKYC, Fraud Detection, Hardening |
-| Sprint 6 | 11–12 | Testing, Deployment, Pilot Prep |
+| Sprint   | Weeks | Focus                                 |
+| -------- | ----- | ------------------------------------- |
+| Sprint 1 | 1–2   | Foundation, Auth, MSME Onboarding     |
+| Sprint 2 | 3–4   | Data Ingestion, ML Model, Scoring API |
+| Sprint 3 | 5–6   | Dashboard, SHAP Panel, Visualisations |
+| Sprint 4 | 7–8   | Loan Module, Recommendation Engine    |
+| Sprint 5 | 9–10  | eKYC, Fraud Detection, Hardening      |
+| Sprint 6 | 11–12 | Testing, Deployment, Pilot Prep       |
 
 ---
 
