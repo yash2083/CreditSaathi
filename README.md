@@ -2,9 +2,15 @@
 
 > **AI-Powered Credit & Business Intelligence Platform for MSMEs**
 
-[![CI Status](https://img.shields.io/badge/CI-passing-success?style=flat-square)](https://github.com/yash2083/CreditSaathi/actions)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![License](https://img.shields.io/badge/License-Proprietary-CD3D3D?style=for-the-badge)
 
 ---
+
 
 ## 🚀 Overview
 
