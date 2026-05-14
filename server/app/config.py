@@ -23,8 +23,22 @@ class Settings(BaseSettings):
     # ── ML Service ──────────────────────────────
     ML_SERVICE_URL: str = "http://localhost:8000"
 
-    # ── Chatbot / OpenRouter ────────────────
+    # ── Chatbot / LLM ──────────────────────
+    LLM_API_KEY: Optional[str] = ""
+    LLM_BASE_URL: str = "https://openrouter.ai/api/v1/chat/completions"
+    LLM_MODEL_ID: str = "nvidia/nemotron-3-super-120b-a12b:free"
+    LLM_AUTH_HEADER: str = "Authorization"
+    LLM_AUTH_SCHEME: str = "Bearer"
+
+    # ── OpenRouter (legacy) ────────────────
     OPENROUTER_API_KEY: Optional[str] = ""
+
+    # ── Sarvam Speech-to-Text ──────────────
+    SARVAM_API_KEY: Optional[str] = ""
+    SARVAM_BASE_URL: str = "https://api.sarvam.ai"
+    SARVAM_STT_MODEL: str = "saarika:v2.5"
+    SARVAM_STT_MODE: Optional[str] = ""
+    SARVAM_LANGUAGE_CODE: str = "unknown"
 
     # ── CORS ────────────────────────────────────
     ALLOWED_ORIGIN: str = "http://localhost:3000"

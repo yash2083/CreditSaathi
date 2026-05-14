@@ -14,8 +14,8 @@ from app.models.credit_score import CreditScore
 from app.models.loan_application import LoanApplication
 
 
-OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
-MODEL_ID = "nvidia/nemotron-3-super-120b-a12b:free"
+DEFAULT_LLM_BASE_URL = "https://openrouter.ai/api/v1/chat/completions"
+DEFAULT_LLM_MODEL_ID = "nvidia/nemotron-3-super-120b-a12b:free"
 
 # ── Knowledge base for government schemes & credit tips ─────────
 KNOWLEDGE_BASE = """
@@ -335,7 +335,7 @@ async def get_chat_response(
     user_id: str,
     message: str,
     conversation_history: list[dict],
-    api_key: str,
+    api_key: Optional[str] = None,
     language: str = "en",
 ) -> str:
     """
@@ -358,16 +358,30 @@ async def get_chat_response(
     # Add current message
     messages.append({"role": "user", "content": message})
 
-    # Call OpenRouter
+    # Resolve LLM configuration
+    llm_api_key = api_key or settings.LLM_API_KEY or settings.OPENROUTER_API_KEY
+    llm_base_url = (settings.LLM_BASE_URL or DEFAULT_LLM_BASE_URL).strip()
+    llm_model_id = settings.LLM_MODEL_ID or DEFAULT_LLM_MODEL_ID
+
+    if not llm_api_key:
+        return "⚠️ The AI service is not configured. Please set LLM_API_KEY."
+
+    auth_header = settings.LLM_AUTH_HEADER or "Authorization"
+    auth_scheme = settings.LLM_AUTH_SCHEME or "Bearer"
+    auth_value = f"{auth_scheme} {llm_api_key}".strip() if auth_scheme else llm_api_key
+
     headers = {
-        "Authorization": f"Bearer {api_key}",
+        auth_header: auth_value,
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://creditsaathi.app",
-        "X-Title": "CreditSaathi AI Advisor",
     }
 
+    # OpenRouter recommends adding referer + app title
+    if "openrouter.ai" in llm_base_url:
+        headers["HTTP-Referer"] = "https://creditsaathi.app"
+        headers["X-Title"] = "CreditSaathi AI Advisor"
+
     payload = {
-        "model": MODEL_ID,
+        "model": llm_model_id,
         "messages": messages,
         "max_tokens": 800,
         "temperature": 0.7,
@@ -377,7 +391,7 @@ async def get_chat_response(
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.post(
-                OPENROUTER_URL,
+                llm_base_url,
                 headers=headers,
                 json=payload,
             )

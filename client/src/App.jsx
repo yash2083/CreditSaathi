@@ -15,7 +15,12 @@ import LoanPage from "./pages/LoanPage";
 function App() {
   return (
     <Provider store={store}>
-      <BrowserRouter>
+      <BrowserRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}
+      >
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />

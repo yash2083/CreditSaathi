@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import api from "../services/api";
 import {
   MessageSquare, X, Send, Sparkles, Bot, User, ChevronDown,
-  Zap, TrendingUp, HelpCircle, Landmark, RotateCcw, Globe,
+  Zap, TrendingUp, HelpCircle, Landmark, RotateCcw, Globe, Mic, Square,
 } from "lucide-react";
 
 /* ── Language config ─────────────────────────────── */
@@ -41,9 +41,45 @@ const GREETINGS = {
 };
 
 const PLACEHOLDERS = {
-  en: { input: "Ask about your credit score...", waiting: "Waiting for response...", thinking: "Thinking", advisor: "Your credit advisor", disclaimer: "AI advisor · Responses are generated, not financial advice" },
-  kn: { input: "ನಿಮ್ಮ ಕ್ರೆಡಿಟ್ ಸ್ಕೋರ್ ಬಗ್ಗೆ ಕೇಳಿ...", waiting: "ಪ್ರತಿಕ್ರಿಯೆಗಾಗಿ ಕಾಯಲಾಗುತ್ತಿದೆ...", thinking: "ಯೋಚಿಸುತ್ತಿದ್ದೇನೆ", advisor: "ನಿಮ್ಮ ಕ್ರೆಡಿಟ್ ಸಲಹೆಗಾರ", disclaimer: "AI ಸಲಹೆಗಾರ · ಉತ್ತರಗಳು ಆರ್ಥಿಕ ಸಲಹೆ ಅಲ್ಲ" },
-  hi: { input: "अपने क्रेडिट स्कोर के बारे में पूछें...", waiting: "प्रतिक्रिया की प्रतीक्षा...", thinking: "सोच रहा हूँ", advisor: "आपका क्रेडिट सलाहकार", disclaimer: "AI सलाहकार · उत्तर वित्तीय सलाह नहीं हैं" },
+  en: {
+    input: "Ask about your credit score...",
+    waiting: "Waiting for response...",
+    thinking: "Thinking",
+    advisor: "Your credit advisor",
+    disclaimer: "AI advisor · Responses are generated, not financial advice",
+    recording: "Recording...",
+    listening: "Listening...",
+    holdToTalk: "Hold to talk",
+    releaseToSend: "Release to send",
+  },
+  kn: {
+    input: "ನಿಮ್ಮ ಕ್ರೆಡಿಟ್ ಸ್ಕೋರ್ ಬಗ್ಗೆ ಕೇಳಿ...",
+    waiting: "ಪ್ರತಿಕ್ರಿಯೆಗಾಗಿ ಕಾಯಲಾಗುತ್ತಿದೆ...",
+    thinking: "ಯೋಚಿಸುತ್ತಿದ್ದೇನೆ",
+    advisor: "ನಿಮ್ಮ ಕ್ರೆಡಿಟ್ ಸಲಹೆಗಾರ",
+    disclaimer: "AI ಸಲಹೆಗಾರ · ಉತ್ತರಗಳು ಆರ್ಥಿಕ ಸಲಹೆ ಅಲ್ಲ",
+    recording: "ರೆಕಾರ್ಡ್ ಆಗುತ್ತಿದೆ...",
+    listening: "ಕೇಳಲಾಗುತ್ತಿದೆ...",
+    holdToTalk: "ಮಾತಾಡಲು ಹಿಡಿದುಕೊಳ್ಳಿ",
+    releaseToSend: "ಕಳುಹಿಸಲು ಬಿಡಿ",
+  },
+  hi: {
+    input: "अपने क्रेडिट स्कोर के बारे में पूछें...",
+    waiting: "प्रतिक्रिया की प्रतीक्षा...",
+    thinking: "सोच रहा हूँ",
+    advisor: "आपका क्रेडिट सलाहकार",
+    disclaimer: "AI सलाहकार · उत्तर वित्तीय सलाह नहीं हैं",
+    recording: "रिकॉर्ड हो रहा है...",
+    listening: "सुन रहा हूँ...",
+    holdToTalk: "बोलने के लिए दबाकर रखें",
+    releaseToSend: "भेजने के लिए छोड़ें",
+  },
+};
+
+const STT_LANGUAGE_MAP = {
+  en: "en-IN",
+  hi: "hi-IN",
+  kn: "kn-IN",
 };
 
 /* ── Markdown-lite renderer ─────────────────────── */
@@ -171,12 +207,16 @@ export default function ChatbotWidget() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const [pulseBtn, setPulseBtn] = useState(true);
   const [lang, setLang] = useState("en");
   const messagesEndRef = useRef(null);
   const chatBodyRef = useRef(null);
   const inputRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
+  const mediaStreamRef = useRef(null);
+  const recordChunksRef = useRef([]);
 
   const t = PLACEHOLDERS[lang] || PLACEHOLDERS.en;
 
@@ -235,7 +275,7 @@ export default function ChatbotWidget() {
   // Send message
   const sendMessage = async (text) => {
     const msg = text || input.trim();
-    if (!msg || loading) return;
+    if (!msg || loading || isRecording) return;
 
     const userMsg = { role: "user", content: msg, timestamp: new Date() };
     const newMessages = [...messages, userMsg];
@@ -270,6 +310,125 @@ export default function ChatbotWidget() {
       setMessages((prev) => [...prev, errorMsg]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const stopMediaStream = () => {
+    if (mediaStreamRef.current) {
+      mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+      mediaStreamRef.current = null;
+    }
+  };
+
+  const sendAudioMessage = async (audioBlob) => {
+    if (!audioBlob || !audioBlob.size) return;
+    setLoading(true);
+
+    try {
+      const history = messages
+        .filter((m) => m.role === "user" || m.role === "assistant")
+        .map((m) => ({ role: m.role, content: m.content }));
+
+      const formData = new FormData();
+      const file = new File([audioBlob], "speech.webm", { type: audioBlob.type || "audio/webm" });
+      formData.append("file", file);
+      formData.append("language", lang);
+      formData.append("conversation_history", JSON.stringify(history));
+
+      const sttLanguage = STT_LANGUAGE_MAP[lang] || "unknown";
+      if (sttLanguage && sttLanguage !== "unknown") {
+        formData.append("stt_language_code", sttLanguage);
+      }
+
+      const { data } = await api.post("/chat/speech", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      const transcript = data?.data?.transcript || "(voice message)";
+      const botReply = data?.data?.reply || "⚠️ Sorry, I couldn't process that audio.";
+
+      setMessages((prev) => [
+        ...prev,
+        { role: "user", content: transcript, timestamp: new Date() },
+        { role: "assistant", content: botReply, timestamp: new Date() },
+      ]);
+    } catch (err) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "⚠️ Voice message failed. Please try again.",
+          timestamp: new Date(),
+          isError: true,
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const startRecording = async () => {
+    if (loading || isRecording) return;
+    if (!navigator.mediaDevices || !window.MediaRecorder) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "⚠️ Voice recording isn't supported in this browser.",
+          timestamp: new Date(),
+          isError: true,
+        },
+      ]);
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaStreamRef.current = stream;
+      const recorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = recorder;
+      recordChunksRef.current = [];
+
+      recorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          recordChunksRef.current.push(event.data);
+        }
+      };
+
+      recorder.onstop = async () => {
+        const chunks = recordChunksRef.current;
+        recordChunksRef.current = [];
+        const mimeType = recorder.mimeType || "audio/webm";
+        const audioBlob = new Blob(chunks, { type: mimeType });
+        stopMediaStream();
+        await sendAudioMessage(audioBlob);
+      };
+
+      recorder.start();
+      setIsRecording(true);
+    } catch (err) {
+      stopMediaStream();
+      setIsRecording(false);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "⚠️ Microphone access was blocked. Please allow it and try again.",
+          timestamp: new Date(),
+          isError: true,
+        },
+      ]);
+    }
+  };
+
+  const stopRecording = () => {
+    if (!isRecording) return;
+    setIsRecording(false);
+    const recorder = mediaRecorderRef.current;
+    if (recorder && recorder.state !== "inactive") {
+      recorder.stop();
+    } else {
+      stopMediaStream();
     }
   };
 
@@ -315,7 +474,9 @@ export default function ChatbotWidget() {
             <div>
               <h3 className="chatbot-header-title">CreditSaathi AI</h3>
               <p className="chatbot-header-sub">
-                {loading ? (
+                {isRecording ? (
+                  <span className="typing-text">{t.listening}</span>
+                ) : loading ? (
                   <span className="typing-text">{t.thinking}<span className="typing-ellipsis" /></span>
                 ) : (
                   t.advisor
@@ -388,21 +549,44 @@ export default function ChatbotWidget() {
         {/* Input */}
         <div className="chatbot-input-area">
           <div className="chatbot-input-wrap">
+            <button
+              type="button"
+              className={`chatbot-mic-btn ${isRecording ? "recording" : ""}`}
+              title={isRecording ? t.releaseToSend : t.holdToTalk}
+              onMouseDown={startRecording}
+              onMouseUp={stopRecording}
+              onMouseLeave={stopRecording}
+              onTouchStart={(e) => {
+                e.preventDefault();
+                startRecording();
+              }}
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                stopRecording();
+              }}
+              onTouchCancel={(e) => {
+                e.preventDefault();
+                stopRecording();
+              }}
+              disabled={loading}
+            >
+              {isRecording ? <Square size={16} /> : <Mic size={16} />}
+            </button>
             <input
               ref={inputRef}
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={loading ? t.waiting : t.input}
-              disabled={loading}
+              placeholder={loading ? t.waiting : isRecording ? t.recording : t.input}
+              disabled={loading || isRecording}
               className="chatbot-input"
               maxLength={2000}
             />
             <button
               onClick={() => sendMessage()}
-              disabled={!input.trim() || loading}
-              className={`chatbot-send-btn ${input.trim() && !loading ? "active" : ""}`}
+              disabled={!input.trim() || loading || isRecording}
+              className={`chatbot-send-btn ${input.trim() && !loading && !isRecording ? "active" : ""}`}
             >
               <Send size={16} />
             </button>

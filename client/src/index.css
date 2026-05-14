@@ -676,6 +676,39 @@
 .chatbot-input:disabled {
   opacity: 0.5;
 }
+.chatbot-mic-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  border: none;
+  background: #E5E7EB;
+  color: #6B7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+.chatbot-mic-btn:hover {
+  background: #D1D5DB;
+  color: #374151;
+}
+.chatbot-mic-btn:active {
+  transform: scale(0.94);
+}
+.chatbot-mic-btn.recording {
+  background: linear-gradient(135deg, #EF4444, #B91C1C);
+  color: white;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.35);
+}
+.chatbot-mic-btn.recording:hover {
+  transform: scale(1.05);
+}
+.chatbot-mic-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 .chatbot-send-btn {
   width: 36px;
   height: 36px;
