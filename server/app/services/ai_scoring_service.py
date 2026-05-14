@@ -9,7 +9,7 @@ from app.models.credit_score import CreditScore
 from app.models.msme import MSME
 
 # We'll use a deepseek free model by default
-AI_SCORING_MODEL = "deepseek/deepseek-chat:free"
+AI_SCORING_MODEL = "deepseek/deepseek-v4-flash:free"
 
 SYSTEM_PROMPT = """You are CreditSaathi's core risk engine — a highly advanced ensemble of XGBoost and Random Forest machine learning models trained on Indian MSME financial data.
 Your job is to evaluate an MSME based on their uploaded invoice data and generate a highly realistic, mocked credit score out of 850.
