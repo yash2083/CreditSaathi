@@ -11,6 +11,7 @@ import MSMEOnboardingPage from "./pages/MSMEOnboardingPage";
 import MSMEListPage from "./pages/MSMEListPage";
 import DataUploadPage from "./pages/DataUploadPage";
 import LoanPage from "./pages/LoanPage";
+import InvoiceParserPage from "./pages/InvoiceParserPage";
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
             <Route path="msmes" element={<MSMEListPage />} />
             <Route path="data-upload" element={<DataUploadPage />} />
             <Route path="loans" element={<LoanPage />} />
+            <Route path="invoice-parser" element={<InvoiceParserPage />} />
           </Route>
 
           {/* Catch-all */}

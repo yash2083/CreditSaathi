@@ -13,6 +13,7 @@ from app.models.user import User
 from app.services.auth_service import get_current_user
 from app.services.ml_service import call_ml_service
 from app.services.audit_service import create_audit_log
+from app.services.ai_scoring_service import generate_mock_ai_score
 
 router = APIRouter(prefix="/scoring", tags=["Scoring"])
 
@@ -150,6 +151,35 @@ async def generate_score(msme_id: str, request: Request, user: User = Depends(ge
     )
 
     return {"success": True, "message": "Credit score generated", "data": credit_score.to_response_dict()}
+
+
+# ── POST /api/v1/scoring/generate-ai/:msmeId ────────────
+@router.post("/generate-ai/{msme_id}", status_code=201)
+async def generate_ai_score(msme_id: str, request: Request, user: User = Depends(get_current_user)):
+    """Generate a mock AI score using DeepSeek OpenRouter pretending to be XGBoost."""
+    msme = await MSME.get(msme_id)
+    if not msme:
+        return JSONResponse(status_code=404, content={"success": False, "error": {"code": "NOT_FOUND", "message": "MSME not found."}})
+
+    # Get the invoice data from the request body
+    try:
+        invoice_data = await request.json()
+    except:
+        invoice_data = {}
+
+    try:
+        credit_score = await generate_mock_ai_score(msme, str(user.id), invoice_data)
+    except Exception as e:
+        return JSONResponse(status_code=502, content={"success": False, "error": {"code": "AI_SERVICE_ERROR", "message": str(e)}})
+
+    await create_audit_log(
+        action="ai_score_generated", performed_by=str(user.id),
+        target_msme_id=str(msme.id), entity_type="CreditScore",
+        entity_id=str(credit_score.id), request=request,
+        payload={"score": credit_score.score_value, "riskCategory": credit_score.risk_category},
+    )
+
+    return {"success": True, "message": "AI Credit score generated", "data": credit_score.to_response_dict()}
 
 
 # ── GET /api/v1/scoring/:msmeId/latest ───────────────

@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../store/authSlice";
 import { useState } from "react";
 import {
-  LayoutDashboard, Building2, PlusCircle, Upload, Landmark,
+  LayoutDashboard, Building2, PlusCircle, Upload, Landmark, ScanLine,
   ChevronLeft, ChevronRight, Bell, LogOut, User,
 } from "lucide-react";
 import ChatbotWidget from "./ChatbotWidget";
@@ -13,6 +13,7 @@ const navItems = [
   { path: "/msmes", label: "MSME Portfolio", icon: Building2, roles: ["admin", "bank_officer"] },
   { path: "/msme/onboard", label: "Onboard MSME", icon: PlusCircle },
   { path: "/data-upload", label: "Data Upload", icon: Upload },
+  { path: "/invoice-parser", label: "Invoice Parser", icon: ScanLine },
   { path: "/loans", label: "Loan Center", icon: Landmark },
 ];
 

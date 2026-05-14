@@ -19,6 +19,7 @@ from app.routes.transactions import router as transactions_router
 from app.routes.scoring import router as scoring_router
 from app.routes.loans import router as loans_router
 from app.routes.chat import router as chat_router
+from app.parser.parser_route import router as parser_router
 
 
 @asynccontextmanager
@@ -73,6 +74,7 @@ app.include_router(transactions_router, prefix="/api/v1")
 app.include_router(scoring_router, prefix="/api/v1")
 app.include_router(loans_router, prefix="/api/v1")
 app.include_router(chat_router, prefix="/api/v1")
+app.include_router(parser_router, prefix="/api/v1")
 
 
 # ── 404 Handler ──────────────────────────────────────

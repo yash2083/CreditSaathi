@@ -32,6 +32,7 @@ class Settings(BaseSettings):
 
     # ── OpenRouter (legacy) ────────────────
     OPENROUTER_API_KEY: Optional[str] = ""
+    OPENROUTER_MODEL: str = "google/gemma-4-31b-it:free"
 
     # ── Sarvam Speech-to-Text ──────────────
     SARVAM_API_KEY: Optional[str] = ""
