@@ -99,6 +99,12 @@ async def generate_mock_ai_score(msme: MSME, user_id: str, invoice_data: dict) -
 
     audit_hash = hashlib.sha256(json.dumps(parsed).encode()).hexdigest()
 
+    stress_raw = parsed.get("stress_signals", [])
+    stress_signals = [{"signal": s} if isinstance(s, str) else s for s in stress_raw]
+
+    fraud_raw = parsed.get("fraud_flags", [])
+    fraud_flags = [{"flag": f} if isinstance(f, str) else f for f in fraud_raw]
+
     credit_score = CreditScore(
         msme_id=str(msme.id),
         generated_by=user_id,
@@ -110,8 +116,8 @@ async def generate_mock_ai_score(msme: MSME, user_id: str, invoice_data: dict) -
         recommended_loan_amount=loan["amount"],
         recommended_interest_band=loan["band"],
         eligible_government_schemes=loan["schemes"],
-        stress_signals=parsed.get("stress_signals", []),
-        fraud_flags=parsed.get("fraud_flags", []),
+        stress_signals=stress_signals,
+        fraud_flags=fraud_flags,
         explanation_text=parsed.get("explanation_text", ""),
         audit_hash=audit_hash,
     )

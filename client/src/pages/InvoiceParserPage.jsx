@@ -539,7 +539,7 @@ export default function InvoiceParserPage() {
                      </h3>
                      <ul className="list-disc pl-5 space-y-1">
                        {generatedScore.stressSignals.map((sig, i) => (
-                         <li key={i} className="text-xs text-red-700">{sig}</li>
+                         <li key={i} className="text-xs text-red-700">{typeof sig === 'string' ? sig : sig.signal || sig.message || JSON.stringify(sig)}</li>
                        ))}
                      </ul>
                    </div>
