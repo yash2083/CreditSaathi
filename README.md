@@ -110,9 +110,9 @@ cd CreditSaathi
 ### 2. Environment Setup
 
 ```bash
-cp .env.example server/.env
-cp .env.example ml/.env
-# Edit both .env files with your actual credentials
+cp server/.env.example server/.env
+# Edit server/.env with your credentials (MongoDB, JWT, LLM, Sarvam, etc.).
+# For the ML microservice, create ml/.env if your setup requires it.
 ```
 
 ### 3. Run with Docker (Recommended)
@@ -153,6 +153,10 @@ cd ml
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
+
+### Render (Sarvam voice / STT)
+
+On the **backend** Web Service: set the same variables as in [`server/.env.example`](./server/.env.example). At minimum add **`SARVAM_API_KEY`** as a **Secret**; optional overrides: `SARVAM_BASE_URL`, `SARVAM_STT_MODEL`, `SARVAM_STT_MODE`, `SARVAM_LANGUAGE_CODE`. Point the service at the deploy branch (e.g. `vishwapanchal`) and redeploy after saving environment variables.
 
 ---
 
