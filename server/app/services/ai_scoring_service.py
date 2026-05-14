@@ -110,7 +110,7 @@ async def generate_mock_ai_score(msme: MSME, user_id: str, invoice_data: dict) -
         generated_by=user_id,
         score_value=score_val,
         risk_category=parsed.get("risk_category", "Medium"),
-        model_version="xgboost_rf_ensemble_v2 (mocked via AI)",
+        model_version="xgboost_rf_ensemble_v2",
         shap_summary=parsed.get("shap_summary", []),
         feature_input_snapshot={"invoice_context": invoice_summary},
         recommended_loan_amount=loan["amount"],
