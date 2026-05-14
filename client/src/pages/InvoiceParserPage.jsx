@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchMSMEs, uploadGSTData } from "../store/msmeSlice";
 import {
+  ScanLine, Upload, FileImage, CheckCircle2, AlertCircle,
   Loader2, X, Building2, Receipt, IndianRupee, ChevronDown, ChevronUp, Zap, Target
 } from "lucide-react";
 import api from "../services/api";
